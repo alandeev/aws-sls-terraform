@@ -1,0 +1,20 @@
+{
+  "name": "serverless",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "joi": "^17.4.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.948.0",
+    "serverless-offline": "^7.0.0"
+  },
+  "scripts": {
+    "debug": "sls offline"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

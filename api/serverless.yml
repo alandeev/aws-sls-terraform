@@ -1,0 +1,25 @@
+service: course-udemy
+
+provider:
+  profile: default
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  environment:
+    DYNAMODB_TABLE_USERS: ${ssm:dynamodb-users-table-${self:custom.stage}}
+
+
+plugins:
+  - serverless-offline
+
+functions:
+  create-user:
+    role: ${ssm:iam-role-register-${self:custom.stage}}
+    handler: src/controllers/users/register.handler
+    events:
+      - http:
+          path: users/create
+          method: post 
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
