@@ -19,10 +19,16 @@ const validateBody = (body) => {
 }
 
 const main = async (event, context, next) => {
+  console.debug('Request register user')
   const data = validateBody(event.body)
 
   const user = await createUser(data);
 
+  console.info({
+    message: 'Response register user',
+    user
+  })
+  
   return user;
 }
 
