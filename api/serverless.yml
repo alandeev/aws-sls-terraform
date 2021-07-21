@@ -7,7 +7,8 @@ provider:
   stage: dev
   environment:
     DYNAMODB_TABLE_USERS: ${ssm:dynamodb-users-table-${self:custom.stage}}
-
+    TABLE_USERS_EMAIL_GSI: ${ssm:${self:custom.stage}-email-index}
+    SECRET_KEY_LOGIN: ${ssm:${self:custom.stage}-secret-login-key}
 
 plugins:
   - serverless-offline
@@ -19,7 +20,15 @@ functions:
     events:
       - http:
           path: users/create
-          method: post 
-
+          method: post
+  
+  login:
+    role: ${ssm:iam-role-register-${self:custom.stage}}
+    handler: src/controllers/users/login.handler
+    events:
+      - http:
+          path: /login
+          method: post  
+          
 custom:
   stage: ${opt:stage, self:provider.stage}
