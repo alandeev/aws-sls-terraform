@@ -4,11 +4,11 @@ const {
   ValidationError,
   UnauthorizedError
 } = require("../../custom-errors")
-
 const bcrypt = require('bcryptjs')
 
 const lambdaWrapper = require("../../helpers/lambda-wrapper")
 const getUserByEmail = require("../../repositories/users/get-by-email")
+const { generateToken } = require('../../utils/jwt')
 
 const Schema = Joi.object({
   email: Joi.string().email().required(),
@@ -43,12 +43,20 @@ const main = async (event, context, next) => {
     throw new UnauthorizedError('Email/password is invalid')
   }
 
+  const token = generateToken({
+    id: user.id,
+    email: user.email
+  })
+
   console.info({
     message: 'Response register user',
     user
   })
   
-  return user;
+  return {
+    message: "authenticated",
+    token: `Bearer ${token}`
+  }
 }
 
 module.exports = {

@@ -10,11 +10,15 @@ const createUser = async ({
 }) => {
   const id = uuidv4()
 
+  const now = new Date().toISOString()
+
   const user = {
     id,
     name,
     email,
-    password
+    password,
+    created_at: now,
+    updated_at: now
   }
 
   const params = {

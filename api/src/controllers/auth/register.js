@@ -51,7 +51,9 @@ const main = async (event, context, next) => {
     user
   })
   
-  return user;
+  return {
+    message: "Register with success"
+  };
 }
 
 module.exports = {

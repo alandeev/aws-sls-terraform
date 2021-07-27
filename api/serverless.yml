@@ -7,6 +7,7 @@ provider:
   stage: dev
   environment:
     DYNAMODB_TABLE_USERS: ${ssm:dynamodb-users-table-${self:custom.stage}}
+    DYNAMODB_TABLE_RATE_LIMIT: ${ssm:dynamodb-table-rate-limit-${self:custom.stage}}
     TABLE_USERS_EMAIL_GSI: ${ssm:${self:custom.stage}-email-index}
     SECRET_KEY_LOGIN: ${ssm:${self:custom.stage}-secret-login-key}
 
@@ -14,21 +15,33 @@ plugins:
   - serverless-offline
 
 functions:
+  authorizer:
+    handler: src/middlewares/lambda-auth.handler
+
   create-user:
     role: ${ssm:iam-role-register-${self:custom.stage}}
-    handler: src/controllers/users/register.handler
+    handler: src/controllers/auth/register.handler
     events:
       - http:
-          path: users/create
+          path: /create
           method: post
   
   login:
     role: ${ssm:iam-role-register-${self:custom.stage}}
-    handler: src/controllers/users/login.handler
+    handler: src/controllers/auth/login.handler
     events:
       - http:
           path: /login
           method: post  
+
+  me:
+    role: ${ssm:iam-role-me-${self:custom.stage}}
+    handler: src/controllers/users/me.handler
+    events:
+      - http:
+          path: users/me
+          method: get
+          authorizer: authorizer
           
 custom:
   stage: ${opt:stage, self:provider.stage}
